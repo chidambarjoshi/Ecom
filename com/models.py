@@ -64,6 +64,7 @@ class Users(AbstractUser):
     slug = models.SlugField(editable=False, max_length=25)
     photo = models.ImageField(upload_to= user_directory_path , height_field=None, width_field=None, max_length=100, null=True,
                               blank=True, validators=[validate_file_extension])
+    password2=models.CharField(max_length=15, unique=True, null=True, blank=True)
 
 
     USERNAME_FIELD = 'email'
