@@ -11,10 +11,13 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+import environ
+env= environ.Env()
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -37,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'com',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -75,10 +80,14 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE':'django.db.backends.mysql',
+        'NAME': env("DATABASE_NAME"),
+        'USER':env("DATABASE_USER"),
+        'HOST':env("DATABASE_HOST"),
+        'PORT':env("DATABASE_PORT"),
     }
 }
+
 
 
 # Password validation
@@ -113,11 +122,29 @@ USE_L10N = True
 
 USE_TZ = True
 
+#------------------------------AWS S3 Connections-------------------------------#
+
+AWS_ACCESS_KEY_ID =env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY =env("AWS_SECRET_ACCESS_KEY")
+AWS_S3_REGION_NAME='us-east-2'
+AWS_STORAGE_BUCKET_NAME = 'ecom-my'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'static'
+STATICFILES_LOCATION = 'static'
+MEDIAFILES_LOCATION = 'media'
+MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
+#---------------------------------------------------------------------------------#
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
