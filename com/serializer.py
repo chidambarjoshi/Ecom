@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users
+from .models import Users,Category,Product,product_image
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
@@ -40,3 +40,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Product
+        fields='__all__'
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Category
+        fields='__all__'
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=product_image
+        fields='__all__'
