@@ -4,9 +4,9 @@ from .views import register,login_api,logout,CategoryView,ProductView,product_im
 from rest_framework.routers import DefaultRouter
 from django.urls import path,include
 router = DefaultRouter()
-router.register(r'category', CategoryView)
-# router.register(r'product', ProductView)
-# router.register(r'product_image', product_imageView)
+router.register(r'api/category', CategoryView)
+router.register(r'api/product', ProductView)
+router.register(r'api/product_image', product_imageView)
 
 
 

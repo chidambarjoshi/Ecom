@@ -97,7 +97,7 @@ class Category(models.Model):
     description=models.CharField(max_length=100,blank=True,null=True)
 
     def __str__(self):
-        return self.name
+        return self.cat_name
 
 
 class Product(models.Model):
@@ -107,7 +107,7 @@ class Product(models.Model):
     description=models.CharField(max_length=150, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.product_name
 
 
 class product_image(models.Model):
