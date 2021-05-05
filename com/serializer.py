@@ -44,13 +44,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    category_name=serializers.CharField(source='category' ,read_only=True)
     class Meta:
         model=Product
-        fields='__all__'
+        fields=("product_name","price",
+        "description",
+        "category_name","category")
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    
     class Meta:
         model=Category
         fields='__all__'

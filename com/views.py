@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view,permission_classes
 from django.contrib.auth import authenticate,login
 from rest_framework.authtoken.models import Token
 import pdb
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly,IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import SearchFilter
 # Create your views here.
@@ -81,16 +81,21 @@ class CategoryView(viewsets.ModelViewSet):
     search_fields=['cat_name']
     filter_backends=[SearchFilter]
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
 
 class ProductView(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    search_fields=['product_name']
+    filter_backends=[SearchFilter]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ProductSerializer
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().select_related('category')
 
 
 class product_imageView(viewsets.ModelViewSet):
     serializer_class = product_imageSerializer
     queryset = product_image.objects.all()
+
+
+

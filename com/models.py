@@ -102,7 +102,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     product_name= models.CharField(max_length=50)
-    category= models.ForeignKey(Category,on_delete=models.CASCADE)
+    category= models.ForeignKey(Category,related_name='product',on_delete=models.CASCADE)
     price=models.DecimalField( max_digits=9, decimal_places=2)
     description=models.CharField(max_length=150, null=True, blank=True)
 
@@ -114,4 +114,4 @@ class product_image(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
     image=models.ImageField(upload_to='product')
     def __str__(self):
-        return self.name
+        return self.Product
