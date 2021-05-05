@@ -1,9 +1,9 @@
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializer import RegisterSerializer
+from .serializer import RegisterSerializer,CategorySerializer,ProductSerializer,product_imageSerializer
 from rest_framework import exceptions, viewsets,status
-from .models import Users
+from .models import Users,Category,Product,product_image
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view,permission_classes
 from django.contrib.auth import authenticate,login
@@ -68,3 +68,16 @@ def login_api(request):
 def logout(request):
     Token.objects.filter(user=request.user).delete()
     return JsonResponse({'message':"User Logged out"},status=status.HTTP_200_OK)
+
+class CategoryView(viewsets.ViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+class ProductView(viewsets.ViewSet):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+
+
+class product_imageView(viewsets.ViewSet):
+    serializer_class = product_imageSerializer
+    queryset = product_image.objects.all()

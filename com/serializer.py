@@ -55,7 +55,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields='__all__'
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class product_imageSerializer(serializers.ModelSerializer):
     class Meta:
         model=product_image
         fields='__all__'
