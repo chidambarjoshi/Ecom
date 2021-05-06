@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser,BaseUserManager
+from django.db.models.expressions import OrderBy
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 import os
@@ -82,6 +83,7 @@ class Users(AbstractUser):
             unique_slug = slug
             num = num + 1
         return unique_slug
+   
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = self.get_unique_slug()
@@ -98,20 +100,47 @@ class Category(models.Model):
 
     def __str__(self):
         return self.cat_name
+    class Meta:
+        verbose_name_plural="Categories"
 
 
 class Product(models.Model):
     product_name= models.CharField(max_length=50)
-    category= models.ForeignKey(Category,related_name='product',on_delete=models.CASCADE)
-    price=models.DecimalField( max_digits=9, decimal_places=2)
-    description=models.CharField(max_length=150, null=True, blank=True)
+    category= models.ForeignKey(Category,related_name='product',on_delete=models.CASCADE,null=True)
+    price=models.DecimalField( max_digits=9, decimal_places=2,default=0)
+    description=models.CharField(max_length=150, default="", blank=True)
 
     def __str__(self):
         return self.product_name
+    class Meta:
+        verbose_name_plural="products"
 
 
 class product_image(models.Model):
-    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name='images')
+    image=models.ImageField(upload_to='product')
+    def __str__(self):
+        return self.Product
+
+    class Meta:
+        verbose_name_plural="product_image"
+
+
+class Order(models.Model):
+    user=models.ForeignKey(Users,on_delete=models.PROTECT,related_name='user_name')
+    product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name='pro_name')
+    order_date=models.DateField(auto_now=True)
+    total_amount=models.DecimalField(max_digits=99, decimal_places=2, null=True)
+
+    class Meta:
+        ordering =['user']
+        verbose_name_plural="Orders"
+
+
+
+class product_image1(models.Model):
+    image_name=models.CharField(max_length=20,null=True, blank=True)
+    product=models.ManyToManyField(Product)
     image=models.ImageField(upload_to='product')
     def __str__(self):
         return self.Product

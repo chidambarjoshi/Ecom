@@ -1,11 +1,12 @@
+from django.db.models.fields import json
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializer import RegisterSerializer,CategorySerializer,ProductSerializer,product_imageSerializer
-from rest_framework import exceptions, viewsets,status
-from .models import Users,Category,Product,product_image
+from .serializer import RegisterSerializer,CategorySerializer,ProductSerializer,product_imageSerializer,product_imageSerializer1
+from rest_framework import exceptions, serializers, viewsets,status
+from .models import Users,Category,Product,product_image,product_image1
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view,permission_classes
+from rest_framework.decorators import api_view,permission_classes,action
 from django.contrib.auth import authenticate,login
 from rest_framework.authtoken.models import Token
 import pdb
@@ -85,10 +86,33 @@ class CategoryView(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
 
+    @action(methods=['get'],detail=False)
+    def search(self,request):
+        try:
+            cat_name=request.data['search']
+            category=Category.objects.filter(cat_name__icontains=cat_name).values_list('cat_name',flat= True)
+            if category:
+                category={'category':list(category)}
+                return JsonResponse(data=category,status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({"message":"category not found"},status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            print(e)
+            message="something went wrong"
+            return JsonResponse({'message':message},status=status.HTTP_400_BAD_REQUEST)
+
+class CategoryView1(viewsets.ModelViewSet):
+    search_fields=['cat_name']
+    filter_backends=[SearchFilter]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
 class ProductView(viewsets.ModelViewSet):
     search_fields=['product_name']
     filter_backends=[SearchFilter]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ProductSerializer
     queryset = Product.objects.all().select_related('category')
 
@@ -97,5 +121,27 @@ class product_imageView(viewsets.ModelViewSet):
     serializer_class = product_imageSerializer
     queryset = product_image.objects.all()
 
+
+
+class product_imageView1(viewsets.ModelViewSet):
+    serializer_class = product_imageSerializer1
+    queryset = product_image1.objects.all()
+
+    def create(self, request):
+        data=request.data
+        try:
+            new_product_image=product_image1.objects.create(image=data['image'],image_name=data['image_name'])
+            new_product_image.save()
+           
+            for pro in eval(data['product']):
+                pro_obj=Product.objects.get(pk=pro)
+                new_product_image.product.add(pro_obj)
+
+            serializers=product_imageSerializer1(new_product_image)
+
+            return JsonResponse(serializers.data,status=status.HTTP_200_OK)
+        except:
+            print(serializers.errors)
+            return JsonResponse({'message':"somthing went wrong"},status=status.HTTP_400_BAD_REQUEST)
 
 

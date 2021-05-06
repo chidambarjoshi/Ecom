@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users,Category,Product,product_image
+from .models import Users,Category,Product,product_image,Order,product_image1
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
@@ -42,23 +42,52 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-
-class ProductSerializer(serializers.ModelSerializer):
-    category_name=serializers.CharField(source='category' ,read_only=True)
-    class Meta:
-        model=Product
-        fields=("product_name","price",
-        "description",
-        "category_name","category")
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Category
-        fields='__all__'
-
-
 class product_imageSerializer(serializers.ModelSerializer):
     class Meta:
         model=product_image
         fields='__all__'
+
+class product_image_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=product_image
+        fields=["image"]
+class ProductSerializer(serializers.ModelSerializer):
+    category_name=serializers.CharField(source='category' ,read_only=True)
+    images=product_image_Serializer(many=True,read_only=True)
+    class Meta:
+        model=Product
+        fields=("id","product_name","price",
+        "description",
+        "category","category_name","images")
+
+
+class CategorySerializer1(serializers.ModelSerializer):
+    class Meta:
+        model=Category
+        fields='__all__'
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Category
+        fields=['cat_name']
+class OrderSerializer(serializers.ModelSerializer):
+    user_name=serializers.CharField(source='user' ,read_only=True)
+    product_name=serializers.CharField(source='product' ,read_only=True)
+    class Meta:
+        model=['user','product','user_name','product_name']
+
+class product_imageSerializer1(serializers.ModelSerializer):
+    class Meta:
+        model=product_image1
+        fields='__all__'
+    
+    def create(self, validated_data):
+        user = product_image1.objects.create(
+            
+            image_name=validated_data['image_name'],
+            image=validated_data['image'],
+            product=list(validated_data['product'])
+        )
+        user.save()
+
+        return user
