@@ -131,14 +131,11 @@ class product_imageView1(viewsets.ModelViewSet):
         data=request.data
         try:
             new_product_image=product_image1.objects.create(image=data['image'],image_name=data['image_name'])
-            new_product_image.save()
-           
+            new_product_image.save()           
             for pro in eval(data['product']):
                 pro_obj=Product.objects.get(pk=pro)
                 new_product_image.product.add(pro_obj)
-
             serializers=product_imageSerializer1(new_product_image)
-
             return JsonResponse(serializers.data,status=status.HTTP_200_OK)
         except:
             print(serializers.errors)
