@@ -19,7 +19,7 @@ class UsersForm(forms.ModelForm):
         phone = self.cleaned_data.get('phone')
         email_qs = Users.objects.filter(email=email)
         phone_qs = Users.objects.filter(phone=phone)
-        con_password=self.cleaned_data.get('con_password')
+        con_password=self.cleaned_data.get('password2')
         password=self.cleaned_data.get('password')
         if password!=con_password:
             raise forms.ValidationError("Password and Confirm Password does not match")

@@ -1,4 +1,8 @@
 <html>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <title>Register</title>
+    </head>
     {% load crispy_forms_tags %}
     <body>
 
@@ -10,18 +14,15 @@
                             </div>
                         {% endfor %}
                     {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            <strong>{{ error|escape }}</strong>
-                        </div>
-                    {% endfor %}
-                    {% endif %}
-        <center>
+                    
+        {% endif %}
+        
         <form method="POST">
+           <p> * required fields</p>
             {%csrf_token%}
-            {{form|crispy }}
+            {{form|crispy }}<br>
             <input type="submit">
         </form>
-    </center>
+    
     </body>
 </html>
