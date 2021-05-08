@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view,permission_classes,action
 from django.contrib.auth import authenticate,login
 from rest_framework.authtoken.models import Token
 import pdb
+
 from rest_framework.permissions import IsAuthenticatedOrReadOnly,IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import SearchFilter
@@ -66,8 +67,7 @@ def login_api(request):
             message="Invalid Credentials"
             return JsonResponse({'message':message},status=status.HTTP_403_FORBIDDEN)
     except Exception as e:
-        print('hello')
-        print(e)
+        
         message="something went wrong"
         return JsonResponse({'message':message},status=status.HTTP_400_BAD_REQUEST)
 
@@ -90,6 +90,7 @@ class CategoryView(viewsets.ModelViewSet):
     def search(self,request):
         try:
             cat_name=request.data['search']
+            
             category=Category.objects.filter(cat_name__icontains=cat_name).values_list('cat_name',flat= True)
             if category:
                 category={'category':list(category)}
