@@ -4,7 +4,7 @@
         <title>Register</title>
     </head>
     {% load crispy_forms_tags %}
-    <body>
+    <body >
 
         {% if form.errors %}
                     {% for field in form %}
@@ -18,11 +18,14 @@
         {% endif %}
         
         <form method="POST">
-           <p> * required fields</p>
+           
             {%csrf_token%}
-            {{form|crispy }}<br>
+            {{form }}<br>
             <input type="submit">
         </form>
     
+        <hr>
+
+        {{user.phono}}
     </body>
 </html>
